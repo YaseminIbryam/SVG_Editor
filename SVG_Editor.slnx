@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="SVG_Editor.vcxproj" />
+  <Project Path="SVG_Editor.vcxproj" Id="5c77ed8d-b6bb-4345-b061-ab0eff186f7f" />
 </Solution>
