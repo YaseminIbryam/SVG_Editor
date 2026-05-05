@@ -1,6 +1,6 @@
 /**
 * @file main.cpp
-* @brief Главен файл, съдържащ главното меню за команди.
+* 
 */
 
 #include <iostream>
@@ -9,84 +9,107 @@
 
 
 class SvgEditor {
-}
-void help() {
-	std::cout << "The following commands are supported:\n"
-		<< "open <file>		opens <file>\n"
-		<< "close			closes currently opened file\n"
-		<< "save			saves the currently open file\n"
-		<< "saveas <file>	saves the currently open file in <file>\n"
-		<< "help			prints this information\n"
-		<< "exit			exists the program\n";
-}
+private:
+	std::string currentFilePath = "";
+	std::string command = "";
 
-std::string getFilePath() {
-	std::string filePath;
+	std::string getFilePath() {
+		std::string filePath;
 
-	//Изчиства интервалите след командата, за да не влязат в името на файла
-	std::getline(std::cin >> std::ws, filePath);
+		//Изчиства интервалите след командата, за да не влязат в името на файла
+		std::getline(std::cin >> std::ws, filePath);
+		
+		if (filePath.empty()) {
+			std::cout << "Грешка! Липсва име на файл!" << std::endl;
+			return "";
+		}
 
-	//Изчиства интервалите след името на файла, ако има такива
-	while (!filePath.empty() && filePath.back() == ' ') {
-		filePath.pop_back();
+		//Изчиства интервалите след името на файла, ако има такива
+		while (!filePath.empty() && filePath.back() == ' ') {
+			filePath.pop_back();
+		}
+
+		//Премахва кавичките от началото и края, ако има такива
+		if (filePath.size() >= 2 && filePath.front() == '"' && filePath.back() == '"') {
+			filePath.pop_back();
+			filePath.erase(0, 1);
+		}
+		else if (filePath.front() == '"' || filePath.back() == '"') { // при " или несъответствие в кавичките
+			std::cout << "Грешка! Грешен формат на името на файла!" << std::endl;
+			return "";
+		}
+		
+		if (!filePath.ends_with(".svg")) { //C++20
+			std::cout << "Грешка! Програмата поддържа .svg файлов формат!" << std::endl;
+			return "";
+		}
+		return filePath;
 	}
 
-	//Премахва кавичките от началото и края, ако има такива
-	if (filePath.size() >= 2 && filePath.front() == '"' && filePath.back() == '"') {
-		filePath.pop_back();
-		filePath.erase(0, 1);
-	}
-	else if (filePath.front() == '"' || filePath.back() == '"') { // при " или несъответствие в кавичките
-		std::cout << "Грешка! Грешен формат на името на файла!" << std::endl;
-		return "";
-	}
-	if (filePath.empty()) {
-		std::cout << "Грешка! Липсва име на файл!" << std::endl;
-		return "";
-	}
-	if (!filePath.ends_with(".svg")) { //C++20
-		std::cout << "Грешка! Програмата поддържа .svg файлов формат!" << std::endl;
-		return "";
-	}
-	return filePath;
+	void openFile() {
+		std::string filePath = getFilePath();
+		if (filePath.empty()) {
+			return;
+		}
 
-}
+		std::ifstream svgFile(filePath);
 
-void openFile(std::string& filePath) {
-	filePath = getFilePath();
-	if (filePath.empty()) {
-		return;
-	}
-	
-	std::ifstream svgFile(filePath);
+		if (!svgFile.is_open()) {
+			std::ofstream svgFile(filePath);
+		}
 
-	std::size_t startIndex = filePath.rfind('\\') + 1; // намира индекса на началото на името на файла
-	std::size_t lenFileName = filePath.length() - startIndex;
-	std::string fileName = filePath.substr(startIndex, lenFileName);
-	if (svgFile.is_open()) {
+		currentFilePath = filePath;
+		svgFile.close();
+
+		//std::size_t lastBackslashIndex = filePath.rfind('\\'); // връща std::string::npos ако няма съвпадение
+		//if (lastBackslashIndex == std::string::npos) {  //std::string::npos = -1 - константа за най-голямата възможна стойност на size_t
+		//	std::string fileName = filePath;
+		//}
+		//else {
+		//	std::string fileName = filePath.substr(lastBackslashIndex + 1);
+		//}
+		std::size_t startIndex = filePath.rfind('\\') + 1; // намира индекса на началото на името на файла
+		std::string fileName = filePath.substr(startIndex);
+
 		std::cout << "Successfully opened " << fileName;
+		
 	}
-	else {
-		/
-}
+	void help() {
+		std::cout << "The following commands are supported:\n"
+			<< "open <file>		opens <file>\n"
+			<< "close			closes currently opened file\n"
+			<< "save			saves the currently open file\n"
+			<< "saveas <file>	saves the currently open file in <file>\n"
+			<< "help			prints this information\n"
+			<< "exit			exists the program\n";
+	}
+
+public:
+	void start() {
+		while (std::cin >> command && command != "exit") {
+			if (command == "open") {
+
+			}
+			else if (command == "close") {
+
+			}
+			else if (command == "save") {
+
+			}
+			else if (command == "saveas") {
+
+			}
+			else if (command == "help") {
+				help();
+			}
+		}
+	}
+};
+
+
 
 int main() {
-	std::string currentFile = "";
-	std::string command = "";
-	while (std::cin >> command && command != "exit") { 
-		if (command == "open") {
-			
-		}
-		else if (command == "close") {
-
-		}
-		else if (command == "save") {
-
-		}
-		else if (command == "saveas") {
-
-		}
-		else if (command == "help") {
-			help();
-		}
-	}
+	SvgEditor editor;
+	editor.start();
+}
+	
