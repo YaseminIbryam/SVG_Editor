@@ -1,5 +1,4 @@
 #pragma once
-
 #include <string>
 
 class SvgEditor {
@@ -8,7 +7,7 @@ private:
 	std::string command = "";
 
 	std::string getFilePath();
-	std::string getFileName(std::string path) const;
+	std::string getFileName(const std::string& path) const;
 	void open();
 	void close();
 	void save();
