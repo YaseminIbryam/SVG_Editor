@@ -2,6 +2,8 @@
 #include <fstream>
 #include "SvgEditor.h"
 
+//TO DO: LEARN how to use <stdexcept>
+
 
 std::string SvgEditor::getFilePath() {
 	std::string filePath;
@@ -46,7 +48,7 @@ std::string SvgEditor::getFileName(const std::string& path) const{
 
 void SvgEditor::open() {
 	if (currentFilePath != "") {
-		std::cout << "Error: File " << getFileName(currentFilePath) << " is already open.Please close it first.";
+		std::cout << "Error: File " << getFileName(currentFilePath) << " is already open. Please close it first.";
 		return;
 	}
 	std::string filePath = getFilePath();
@@ -56,6 +58,7 @@ void SvgEditor::open() {
 	std::ifstream svgFile(filePath);
 	if (!svgFile.is_open()) {
 		std::ofstream svgFile(filePath);
+		//TO DO: GET THE INFO FROM THE FILE AND STORE IT
 	}
 	currentFilePath = filePath;
 	svgFile.close();
