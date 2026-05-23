@@ -28,7 +28,7 @@ public:
 	void translate(double dx, double dy) final;
 
 	/// Проверява дали кръгът се съдържа изцяло в правоъгълен регион.
-	bool withinRectangle(double x, double y, double width, double high) const final;
+	bool withinRectangle(double x, double y, double width, double height) const final;
 
 	/// Проверява дали кръгът се съдържа изцяло в кръгов регион.
 	bool withinCircle(double cx, double cy, double r) const final;

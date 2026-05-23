@@ -38,11 +38,11 @@ public:
 	* @param x Абсциса на горния ляв ъгъл на правоъгълника.
 	* @param y Ордината на горния ляв ъгъл на правоъгълника.
 	* @param width Ширина на правоъгълника.
-	* @param high Височина на правоъгълника.
+	* @param height Височина на правоъгълника.
 	* @return true Ако фигурата е изцяло вътре в правоъгълника.
 	* @return false Ако фигурата излиза извън правоъгълника.
 	*/
-	virtual bool withinRectangle(double x, double y, double width, double high) const = 0;
+	virtual bool withinRectangle(double x, double y, double width, double height) const = 0;
 
 	/**
 	* @brief Проверява дали фигурата се съдържа изцяло в кръгов регион.
