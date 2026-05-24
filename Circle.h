@@ -21,11 +21,17 @@ public:
 	*/
 	Circle(Point center, double radious, std::string fill = "black", std::string stroke = "none", double strokeWidth = 1.0);
 	
+	/**
+	* @brief Създава дълбоко копие на кръга.
+	* @return Circle* Указател към новосъздаденото копие на текущия кръг.
+	*/
+	Circle* clone() const final;
+
 	/// Извежда кръга на екрана.
 	void print() const final;
 
 	/// Измества кръга спрямо текущото му местоположение.
-	void translate(double dx, double dy) final;
+	void translate(double horizontal, double vertical) final;
 
 	/// Проверява дали кръгът се съдържа изцяло в правоъгълен регион.
 	bool withinRectangle(double x, double y, double width, double height) const final;

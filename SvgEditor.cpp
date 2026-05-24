@@ -57,7 +57,7 @@ void SvgEditor::open() {
 	}
 	std::ifstream svgFile(filePath);
 	if (!svgFile.is_open()) {
-		std::ofstream svgFile(filePath);
+		std::ofstream svgFile(filePath); //???
 		//TO DO: GET THE INFO FROM THE FILE AND STORE IT
 	}
 	currentFilePath = filePath;

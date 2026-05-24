@@ -7,13 +7,17 @@ Line::Line(Point start, Point end, std::string stroke, double strokeWidth)
 	Figure("none", stroke, strokeWidth) {
 };
 
+Line* Line::clone() const {
+	return new Line(*this);
+}
+
 void Line::print() const {
 	std::cout << "line " << start.x << ' ' << start.y << ' ' << end.x << ' ' << end.y << ' ' << stroke << ' ' << strokeWidth;
 }
 
-void Line::translate(double dx, double dy) {
-	start.translate(dx, dy);
-	end.translate(dx, dy);
+void Line::translate(double horizontal, double vertical) {
+	start.translate(horizontal, vertical);
+	end.translate(horizontal, vertical);
 }
 
 bool Line::withinRectangle(double x, double y, double width, double height) const {

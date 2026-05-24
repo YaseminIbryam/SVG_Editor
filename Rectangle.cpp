@@ -9,17 +9,19 @@ Rectangle::Rectangle(Point upperLeft, double width, double height, std::string f
 	Figure(fill, stroke, strokeWidth) {
 }
 
+Rectangle* Rectangle::clone() const {
+	return new Rectangle(*this);
+}
 
 void Rectangle::print() const {
 	std::cout << "rectangle " << upperLeft.x << ' ' << upperLeft.y << ' ' << width << ' ' << height << ' ' << fill;
 	if (stroke != "none") {
 		std::cout << ' ' << stroke << ' ' << strokeWidth;
 	}
-	std::cout << std::endl;
 }
 
-void Rectangle::translate(double dx, double dy) {
-	upperLeft.translate(dx, dy);
+void Rectangle::translate(double horizontal, double vertical) {
+	upperLeft.translate(horizontal, vertical);
 }
 
 bool Rectangle::withinRectangle(double x, double y, double width, double height) const {

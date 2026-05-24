@@ -21,17 +21,23 @@ public:
 	Figure(std::string fill, std::string stroke, double strokeWidth) : fill(fill), stroke(stroke), strokeWidth(strokeWidth) {}
 
 	/// @brief Виртуален деструктор за управление на паметта при наследниците.
-	virtual ~Figure() {}
+	virtual ~Figure() = default;
+
+	/**
+	* @brief Създава дълбоко копие на текущата фигура.
+	* @return Figure* Указател към новосъздаденото копие на фигурата.
+	*/
+	virtual Figure* clone() const = 0;
 
 	/// @brief Извежда фигурата на екрана.
 	virtual void print() const = 0;
 
 	/**
 	* @brief Измества фигурата по двете оси спрямо текущото и местоположение.
-	* @param dx Делта X. Промяна по абсциса. Положителна стойност мести надясно, отрицателна - наляво.
-	* @param dy Делта Y. Промяна по ордината. Положителна стойност мести надолу, отрицателна - нагоре.
+	* @param horizontal Промяна по абсциса. Положителна стойност мести надясно, отрицателна - наляво.
+	* @param vertical Промяна по ордината. Положителна стойност мести надолу, отрицателна - нагоре.
 	*/
-	virtual void translate(double dx, double dy) = 0;
+	virtual void translate(double horizontal, double vertical) = 0;
 
 	/**
 	* @brief Проверява дали фигурата се съдържа изцяло в правоъгълен регион.

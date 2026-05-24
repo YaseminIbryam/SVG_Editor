@@ -8,16 +8,19 @@ Circle::Circle(Point center, double radious, std::string fill, std::string strok
 	Figure(fill, stroke, strokeWidth) {
 };
 
+Circle* Circle::clone() const {
+	return new Circle(*this);
+}
+
 void Circle::print() const {
 	std::cout << "circle " << center.x << ' ' << center.y << ' ' << radious << ' ' << fill;
 	if (stroke != "none") {
 		std::cout << ' ' << stroke << ' ' << strokeWidth;
 	}
-	std::cout << std::endl;
 }
 
-void Circle::translate(double dx, double dy) {
-	center.translate(dx, dy);
+void Circle::translate(double horizontal, double vertical) {
+	center.translate(horizontal, vertical);
 }
 
 bool Circle::withinRectangle(double x, double y, double width, double height) const {
