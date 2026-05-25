@@ -114,8 +114,8 @@ void SvgEditor::start() {
 			else if (command == "translate") {
 				bool isAllFigures = false;
 				int n = 0;
-				int horizontal = 0;
-				int vertical = 0;
+				double horizontal = 0;
+				double vertical = 0;
 				if (commandParser::parseTranslate(ss, horizontal, vertical, n, isAllFigures)) {
 
 				}

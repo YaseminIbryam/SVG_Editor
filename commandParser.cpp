@@ -67,7 +67,12 @@ bool commandParser::parseTranslate(std::stringstream& ss, double& horizontal, do
 					std::cout << "Error: '" << arg1 << "' specified more than once!\n";
 					return false;
 				}
-				vertical = std::stod(argument.substr(arg1.size())); //stod = string to double
+				std::size_t charNum = 0;
+				std::string verticalstr = argument.substr(arg1.size());
+				vertical = std::stod(verticalstr, &charNum); //stod = string to double
+				if (charNum < verticalstr.size()) {
+					throw std::invalid_argument("");
+				}
 				hasVertical = true;
 			}
 			else if (argument.starts_with(arg2)) {
@@ -75,7 +80,12 @@ bool commandParser::parseTranslate(std::stringstream& ss, double& horizontal, do
 					std::cout << "Error: '" << arg2 << "' specified more than once!\n"; 
 					return false;
 				}
-				horizontal = std::stod(argument.substr(arg2.size())); //stod = string to double
+				std::size_t charNum = 0;
+				std::string horizontalstr = argument.substr(arg2.size());
+				horizontal = std::stod(horizontalstr, &charNum); //stod = string to double
+				if (charNum < horizontalstr.size()) {
+					throw std::invalid_argument("");
+				}
 				hasHorizontal = true;
 			}
 			else {
@@ -83,7 +93,11 @@ bool commandParser::parseTranslate(std::stringstream& ss, double& horizontal, do
 					std::cout << "Too many or wrong arguments!\n";
 					return false;
 				}
-				n = std::stoi(argument); //stoi = string to int
+				std::size_t charNum = 0;
+				n = std::stoi(argument, &charNum); //stoi = string to int
+				if (charNum < argument.size()) {
+					throw std::invalid_argument("");
+				}
 				if (n <= 0) {
 					std::cout << "Error: Sequence number must be a positive integer starting from 1.\n";
 					return false;
@@ -92,7 +106,7 @@ bool commandParser::parseTranslate(std::stringstream& ss, double& horizontal, do
 				
 			}
 		}
-		catch (...) {
+		catch (const std::exception&) {
 			std::cout << "Error: Invalid argument '" << argument << "'\n";
 			hasN = false;
 			return false;
