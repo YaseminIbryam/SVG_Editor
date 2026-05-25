@@ -1,37 +1,8 @@
 #include <iostream>
 #include <fstream>
+#include "commandParser.h"
 #include "SvgEditor.h"
 
-//TO DO: LEARN how to use <stdexcept>
-
-
-std::string SvgEditor::getFilePath() {
-	std::string filePath;
-	//Изчиства интервалите след командата, за да не влязат в името на файла
-	std::getline(std::cin >> std::ws, filePath);
-	if (filePath.empty()) {
-		std::cout << "Error! Missing file name!" << std::endl;
-		return "";
-	}
-	//Изчиства интервалите след името на файла, ако има такива
-	while (!filePath.empty() && filePath.back() == ' ') {
-		filePath.pop_back();
-	}
-	//Премахва кавичките от началото и края, ако има такива
-	if (filePath.size() >= 2 && filePath.front() == '"' && filePath.back() == '"') {
-		filePath.pop_back();
-		filePath.erase(0, 1);
-	}
-	else if (filePath.front() == '"' || filePath.back() == '"') { // при " или несъответствие в кавичките
-		std::cout << "Error! Wrong file name format!" << std::endl;
-		return "";
-	}
-	if (!filePath.ends_with(".svg")) { //C++20
-		std::cout << "Error! The program supports the .svg file format!" << std::endl;
-		return "";
-	}
-	return filePath;
-}
 
 std::string SvgEditor::getFileName(const std::string& path) const{
 	//std::size_t lastBackslashIndex = filePath.rfind('\\'); // връща std::string::npos ако няма съвпадение
@@ -46,15 +17,7 @@ std::string SvgEditor::getFileName(const std::string& path) const{
 	return name;
 }
 
-void SvgEditor::open() {
-	if (currentFilePath != "") {
-		std::cout << "Error: File " << getFileName(currentFilePath) << " is already open. Please close it first.";
-		return;
-	}
-	std::string filePath = getFilePath();
-	if (filePath.empty()) {
-		return;
-	}
+void SvgEditor::open(std::string& filePath) {
 	std::ifstream svgFile(filePath);
 	if (!svgFile.is_open()) {
 		std::ofstream svgFile(filePath); //???
@@ -66,10 +29,7 @@ void SvgEditor::open() {
 }
 
 void SvgEditor::close() {
-	if (currentFilePath == "") {
-		std::cout << "No file is currently open." << std::endl;
-		return;
-	}
+	// Actually delete the data
 	std::cout << "Successfully closed " << getFileName(currentFilePath) << std::endl;
 	currentFilePath = "";
 }
@@ -84,18 +44,91 @@ void SvgEditor::help() {
 }
 
 void SvgEditor::start() {
-	while (std::cin >> command && command != "exit") {
-		if (command == "open") {
-			open();
-		}
-		else if (command == "close") {
-		}
-		else if (command == "save") {
-		}
-		else if (command == "saveas") {
+	bool isRunning = true;
+	std::string line;
+	while (std::getline(std::cin, line) && isRunning) {
+		std::stringstream ss(line); //Създава поток с реда
+		ss >> command; //Извлича първата дума (командата)
+
+		if (command == "exit") { //Програма ще приключи без значение какво селдва след командата exit
+			isRunning = false;
 		}
 		else if (command == "help") {
-			help();
+			if (commandParser::isClean(ss)) {
+				help();
+			}
+			else {
+				std::cout << "Error: Command 'help' does not accept arguments!";
+			}
+		}
+		else if (currentFilePath.empty()) {
+			if (command == "open") {
+				std::string tempPath;
+				if (commandParser::parsePath(ss, tempPath, command)) {
+					open(tempPath);
+				}
+			}
+			else { 
+				std::cout << "No file is currently open." << std::endl;
+			}
+		}
+		else {
+			if (command == "close") {
+				if (commandParser::isClean(ss)) {
+					close();
+				}
+				else {
+					std::cout << "Error: Command 'close' does not accept arguments!";
+				}
+			}
+			else if (command == "save") {
+				if (commandParser::isClean(ss)) {
+					save();
+				}
+				else {
+					std::cout << "Error: Command 'save' does not accept arguments!";
+				}
+			}
+			else if (command == "print") {
+				if (commandParser::isClean(ss)) {
+					//print();
+				}
+				else {
+					std::cout << "Error: Command 'print' does not accept arguments!";
+				}
+			}
+			else if (command == "saveas") {
+				std::string tempPath;
+				commandParser::parsePath(ss, tempPath, command);
+				saveAs();
+			}
+			
+			else if (command == "create") {
+				//Check for trash
+			}
+			else if (command == "erase") {
+				int n;
+				commandParser::parseN(ss, n, command);
+				//erase();
+			}
+			else if (command == "translate") {
+				bool isAllFigures = false;
+				int n = 0;
+				int horizontal = 0;
+				int vertical = 0;
+				if (commandParser::parseTranslate(ss, horizontal, vertical, n, isAllFigures)) {
+
+				}
+			}
+			else if (command == "within") {
+				//Check for trash
+			}
+			else if (command == "open") {
+				std::cout << "Error: File " << getFileName(currentFilePath) << " is already open. Please close it first.";
+			}
+			else {
+				std::cout << command << " is not recognized." << std::endl;
+			}
 		}
 	}
 }

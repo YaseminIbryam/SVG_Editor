@@ -33,6 +33,9 @@
     <ClCompile Include="FigureList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="commandParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SvgEditor.h">
@@ -54,6 +57,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FigureList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commandParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

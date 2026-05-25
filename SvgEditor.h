@@ -3,30 +3,24 @@
 
 class SvgEditor {
 private:
-	std::string currentFilePath = ""; ///< Пътят до текущо отворения файл. Ако няма такъв е празен стринг
-	std::string command = ""; ///< Последната въведена команда
+	std::string currentFilePath; ///< Пътят до текущо отворения файл. Ако няма такъв е празен стринг
+	std::string command; ///< Последната въведена команда
 
-	/**
-	 * @brief Прочита и валидира пътя до файла, въведен от потребителя.
-	 * @details Маха излишните интервали и кавички и проверява дали файлът завършва на .svg.
-	 * @return std::string Валидният път до файла.
-	 * BEFORE ADDING EXCEPTIONS
-	 */
-	std::string getFilePath();
 
 	/**
 	 * @brief Взима само името на файла от целия път.
 	 * @param path Пълният път.
 	 * @return Името на файла заедно с разширението.
 	 */
-	std::string getFileName(const std::string& path) const;
+	std::string getFileName(const std::string& filePath) const;
 
 	/**
 	 * @brief Отваря SVG файл въз основа на въведен от потребителя път.
 	 * @details Ако подаденият файл не съществува, създава нов празен файл.
-	 * BEFORE ADDING EXCEPTIONS
+	 * 
 	 */
-	void open();
+	//CHANGE HAPPENED
+	void open(std::string& path);
 
 	/// Затваря текущия файл. Промените не се запазват автоматично.
 	void close();
