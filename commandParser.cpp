@@ -26,7 +26,7 @@ bool commandParser::isValidPath(std::string& path) {
 	return true;
 }
 
-bool commandParser::parsePath(std::stringstream& ss, std::string& path, const std::string& command) {
+bool commandParser::parsePathOnly(std::stringstream& ss, std::string& path, const std::string& command) {
 	if (ss >> path) {
 		if (isValidPath(path)) {
 			if (isClean(ss)) {
@@ -41,8 +41,27 @@ bool commandParser::parsePath(std::stringstream& ss, std::string& path, const st
 	return false;
 }
 
-bool commandParser::parseN(std::stringstream& ss, int& n,const std::string& command) {
-	if (extract<int>(ss, n)) {
+
+void commandParser::strToDouble(const std::string& str, double& num) {
+	std::size_t charNum = 0;
+	num = std::stod(str, &charNum); //stod = string to double
+	if (charNum < str.size()) {
+		throw std::invalid_argument("");
+	}
+}
+
+void commandParser::strToInt(const std::string& str, int& n) {
+	std::size_t charNum = 0;
+	n = std::stoi(str, &charNum); //stoi = string to int
+	if (charNum < str.size()) {
+		throw std::invalid_argument("");
+	}
+}
+
+bool commandParser::parseNOnly(std::stringstream& ss, int& n,const std::string& command) {
+	std::string strN;
+	if (ss >> strN) {
+		strToInt(strN, n);
 		if (isClean(ss)) {
 			return true;
 		}
@@ -54,6 +73,7 @@ bool commandParser::parseN(std::stringstream& ss, int& n,const std::string& comm
 	return false;
 }
 
+
 bool commandParser::parseTranslate(std::stringstream& ss, double& horizontal, double& vertical, int& n, bool& hasN) {
 	bool hasVertical = false;
 	bool hasHorizontal = false;
@@ -61,55 +81,36 @@ bool commandParser::parseTranslate(std::stringstream& ss, double& horizontal, do
 	std::string arg2 = "horizontal=";
 	std::string argument;
 	while (ss >> argument) {
-		try {
-			if (argument.starts_with(arg1)) {
-				if (hasVertical) {
-					std::cout << "Error: '" << arg1 << "' specified more than once!\n";
-					return false;
-				}
-				std::size_t charNum = 0;
-				std::string verticalstr = argument.substr(arg1.size());
-				vertical = std::stod(verticalstr, &charNum); //stod = string to double
-				if (charNum < verticalstr.size()) {
-					throw std::invalid_argument("");
-				}
-				hasVertical = true;
+
+		if (argument.starts_with(arg1)) {
+			if (hasVertical) {
+				std::cout << "Error: '" << arg1 << "' specified more than once!\n";
+				return false;
 			}
-			else if (argument.starts_with(arg2)) {
-				if (hasHorizontal) {
-					std::cout << "Error: '" << arg2 << "' specified more than once!\n"; 
-					return false;
-				}
-				std::size_t charNum = 0;
-				std::string horizontalstr = argument.substr(arg2.size());
-				horizontal = std::stod(horizontalstr, &charNum); //stod = string to double
-				if (charNum < horizontalstr.size()) {
-					throw std::invalid_argument("");
-				}
-				hasHorizontal = true;
-			}
-			else {
-				if (hasN) {
-					std::cout << "Too many or wrong arguments!\n";
-					return false;
-				}
-				std::size_t charNum = 0;
-				n = std::stoi(argument, &charNum); //stoi = string to int
-				if (charNum < argument.size()) {
-					throw std::invalid_argument("");
-				}
-				if (n <= 0) {
-					std::cout << "Error: Sequence number must be a positive integer starting from 1.\n";
-					return false;
-				}
-				hasN = true;
-				
-			}
+			std::string verticalstr = argument.substr(arg1.size());
+			strToDouble(verticalstr, vertical);
+			hasVertical = true;
 		}
-		catch (const std::exception&) {
-			std::cout << "Error: Invalid argument '" << argument << "'\n";
-			hasN = false;
-			return false;
+		else if (argument.starts_with(arg2)) {
+			if (hasHorizontal) {
+				std::cout << "Error: '" << arg2 << "' specified more than once!\n"; 
+				return false;
+			}
+			std::string horizontalstr = argument.substr(arg2.size());
+			strToDouble(horizontalstr, horizontal);
+			hasHorizontal = true;
+		}
+		else {
+			if (hasN) {
+				std::cout << "Too many or wrong arguments!\n";
+				return false;
+			}
+			strToInt(argument, n);
+			if (n <= 0) {
+				std::cout << "Error: Sequence number must be a positive integer starting from 1.\n";
+				return false;
+			}
+			hasN = true;
 		}
 	}
 	if (!(hasHorizontal && hasVertical)) {
@@ -119,4 +120,55 @@ bool commandParser::parseTranslate(std::stringstream& ss, double& horizontal, do
 	return true;
 }
 
+bool commandParser::parseRectangleGeometry(std::stringstream& ss, double& x, double& y, double& width, double& height) {
+	std::string arg1, arg2, arg3, arg4;
+	if (!(ss >> arg1 && ss >> arg2 && ss >> arg3 && ss >> arg4)) {
+		std::cout << "Error: A rectangle requires at least 4 double values (x, y, width, height)";
+		return false;
+	}
+	strToDouble(arg1, x);
+	strToDouble(arg2, y);
+	strToDouble(arg3, width);
+	strToDouble(arg4, height);
+	if (width < 0 || height < 0) {
+		std::cout << "Error: Width and height can't be negative numbers.\n";
+		return false;
+	}
+	return true;
+}
 
+bool commandParser::parseCircleGeometry(std::stringstream& ss, double& cx, double& cy, double& r) {
+	std::string arg1, arg2, arg3;
+	if (!(ss >> arg1 && ss >> arg2 && ss >> arg3)) {
+		std::cout << "Error: A circle requires at least 3 double values (cx, cy, radius)";
+		return false;
+	}
+	strToDouble(arg1, cx);
+	strToDouble(arg2, cy);
+	strToDouble(arg3, r);
+	if (r < 0) {
+		std::cout << "Error: Radius can't be a negative number.\n";
+		return false;
+	}
+	return true;
+}
+
+bool commandParser::parseLineGeometry(std::stringstream& ss, double& x1, double& y1, double& x2, double& y2) {
+	std::string arg1, arg2, arg3, arg4;
+	if (!(ss >> arg1 && ss >> arg2 && ss >> arg3 && ss >> arg4)) {
+		std::cout << "Error: A line requires at least 4 double values (x1, y1, x2, y2)";
+		return false;
+	}
+	strToDouble(arg1, x1);
+	strToDouble(arg2, y1);
+	strToDouble(arg3, x2);
+	strToDouble(arg4, y2);
+	return true;
+}
+
+bool commandParser::parseAreaStyle(std::stringstream& ss) {
+
+}
+bool commandParser::parseLinearStyle(std::stringstream& ss) {
+
+}
