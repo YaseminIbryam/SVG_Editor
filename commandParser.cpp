@@ -166,9 +166,34 @@ bool commandParser::parseLineGeometry(std::stringstream& ss, double& x1, double&
 	return true;
 }
 
-bool commandParser::parseAreaStyle(std::stringstream& ss) {
-
+bool commandParser::parseAreaStyle(std::stringstream& ss, std::string& fill, std::string& stroke, double& strokeWidth) {
+	std::string strStrokeWidth;
+	if (!(ss >> fill)) {
+		return true;
+	}
+	if (!(ss >> stroke)) {
+		return true;
+	}
+	if (ss >> strStrokeWidth) {
+		strToDouble(strStrokeWidth, strokeWidth);
+		if (strokeWidth < 0) {
+			std::cout << "Error: Stroke width cannot be negative!\n";
+			return false;
+		}
+	}
+	return true;
 }
-bool commandParser::parseLinearStyle(std::stringstream& ss) {
-
+bool commandParser::parseLinearStyle(std::stringstream& ss, std::string& stroke, double& strokeWidth) {
+	std::string strStrokeWidth;
+	if (!(ss >> stroke)) {
+		return true;
+	}
+	if (ss >> strStrokeWidth) {
+		strToDouble(strStrokeWidth, strokeWidth);
+		if (strokeWidth < 0) {
+			std::cout << "Error: Stroke width cannot be negative!\n";
+			return false;
+		}
+	}
+	return true;
 }

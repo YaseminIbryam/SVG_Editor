@@ -43,6 +43,8 @@ public:
 	*/
 	FigureList& operator=(const FigureList& other);
 
+	void clear();
+
 	/**
 	*@brief Извежда на екрана всички фигури.
 	* Обхожда списъка и вика метода print() за всяка отделна фигура.

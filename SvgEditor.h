@@ -1,10 +1,12 @@
 #pragma once
 #include <string>
+#include "FigureList.h"
 
 class SvgEditor {
 private:
 	std::string currentFilePath; ///< Пътят до текущо отворения файл. Ако няма такъв е празен стринг
 	std::string command; ///< Последната въведена команда
+	FigureList figures;
 
 
 	/**

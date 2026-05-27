@@ -25,6 +25,13 @@ FigureList& FigureList::operator=(const FigureList& other) {
 	return *this;
 }
 
+void FigureList::clear() {
+	for (Figure* figure : list) {
+		delete figure;
+	}
+	list.clear();
+}
+
 void FigureList::print() const {
 	int n = 0;
 	for(const Figure* figure : list) {

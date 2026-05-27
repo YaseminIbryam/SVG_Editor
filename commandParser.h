@@ -25,7 +25,7 @@ public:
 
 	static bool parseLineGeometry(std::stringstream& ss, double& x1, double& y1, double& x2, double& y2);
 
-	static bool parseAreaStyle(std::stringstream& ss);
+	static bool parseAreaStyle(std::stringstream& ss, std::string& fill, std::string& stroke, double& strokeWidth);
 
-	static bool parseLinearStyle(std::stringstream& ss);
+	static bool parseLinearStyle(std::stringstream& ss, std::string& stroke, double& strokeWidth);
 };
