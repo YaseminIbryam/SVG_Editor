@@ -45,6 +45,8 @@ public:
 
 	void clear();
 
+	void save(std::ostream& out) const;
+
 	/**
 	*@brief Извежда на екрана всички фигури.
 	* Обхожда списъка и вика метода print() за всяка отделна фигура.

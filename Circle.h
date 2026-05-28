@@ -9,23 +9,25 @@
 class Circle : public Figure {
 private:
 	Point center; ///< Точка на центъра на кръга
-	double radious; ///< Дължина на радиуса на кръга
+	double radius; ///< Дължина на радиуса на кръга
 public:
 	/** 
 	* @brief Конструктор за създаване на кръг.
 	* @param center Център
-	* @param radious Радиус
+	* @param radius Радиус
 	* @param fill Цвят на пълнежа
 	* @param stroke Цвят на контрура
 	* @param strokeWidth Дебелина на контура
 	*/
-	Circle(Point center, double radious, std::string fill = "black", std::string stroke = "none", double strokeWidth = 1.0);
+	Circle(Point center, double radius, std::string fill = "black", std::string stroke = "none", double strokeWidth = 1.0);
 	
 	/**
 	* @brief Създава дълбоко копие на кръга.
 	* @return Circle* Указател към новосъздаденото копие на текущия кръг.
 	*/
 	Circle* clone() const final;
+
+	void save(std::ostream& out) const final;
 
 	/// Извежда кръга на екрана.
 	void print() const final;

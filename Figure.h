@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <ostream>
 
 /*
 * @brief Абстрактен базов клас за фигурите.
@@ -28,6 +29,8 @@ public:
 	* @return Figure* Указател към новосъздаденото копие на фигурата.
 	*/
 	virtual Figure* clone() const = 0;
+
+	virtual void save(std::ostream& out) const = 0;
 
 	/// @brief Извежда фигурата на екрана.
 	virtual void print() const = 0;

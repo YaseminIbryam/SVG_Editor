@@ -20,15 +20,48 @@ std::string SvgEditor::getFileName(const std::string& path) const{
 	return name;
 }
 
-void SvgEditor::open(std::string& filePath) {
-	std::ifstream svgFile(filePath);
-	if (!svgFile.is_open()) {
-		std::ofstream svgFile(filePath); //???
-		//TO DO: GET THE INFO FROM THE FILE AND STORE IT
+bool SvgEditor::writeToFile(const std::string& path) {
+	std::ofstream file(path);
+	if (!file.is_open()) {
+		std::cout << "Error: Could not open file " << path << " for writing." << std::endl;
+		return false;
 	}
+	file << "<?xml version=\"1.0\" standalone=\"no\"?>\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n<svg>\n";
+	figures.save(file);
+	file << "</svg>\n";
+	file.close();
+	return true;
+}
+
+void SvgEditor::open(std::string& filePath) {
+	std::ifstream file(filePath); // опитва да отвари файла за четене
+	if (!file.is_open()) {
+		std::ofstream createFile(filePath); // отваря за писане (създава го)
+		createFile.close();
+		file.clear();
+		file.open(filePath); // пак опитва да отвари файла за четене 
+		if (!file.is_open()) { // При случай, че пътят е невалиден
+			std::cout << "Error: Invalid path.";
+			return;
+		}
+	}
+	//TO DO: GET THE INFO FROM THE FILE AND STORE IT
 	currentFilePath = filePath;
-	svgFile.close();
-	std::cout << "Successfully opened " << getFileName(filePath) << std::endl;
+	file.close();
+	std::cout << "Successfully opened " << getFileName(currentFilePath) << std::endl;
+}
+
+void SvgEditor::save() {
+	if (writeToFile(currentFilePath)) {
+		std::cout << "Successfully saved the changes to " << getFileName(currentFilePath) << std::endl;
+	}
+}
+
+void SvgEditor::saveAs(const std::string& newPath) {
+	if (writeToFile(newPath)) {
+		std::cout << "Successfully saved another " << getFileName(newPath) << std::endl;
+		currentFilePath = newPath;
+	}
 }
 
 void SvgEditor::close() {
@@ -47,6 +80,101 @@ void SvgEditor::help() {
 		<< "exit			exists the program\n";
 }
 
+void SvgEditor::handleCreate(std::stringstream& ss) {
+	std::string figure;
+	std::string fill = "none";
+	std::string stroke = "none";
+	double strokeWidth = 1.0;
+	if (!(ss >> figure)) {
+		std::cout << "Error: Command 'create' requires a figure type (line, rectangle or circle).\n";
+	}
+	else if (figure != "rectangle" && figure != "circle" && figure != "line") {
+		std::cout << "Error: Figure type can only be line, circle or rectangle.\n";
+	}
+	else if (figure == "circle") {
+		double cx, cy, r;
+		if (commandParser::parseCircleGeometry(ss, cx, cy, r) && commandParser::parseAreaStyle(ss, fill, stroke, strokeWidth)) {
+			if (commandParser::isClean(ss)) {
+				figures.create(new Circle(Point(cx, cy), r, fill, stroke, strokeWidth));
+			}
+			else {
+				std::cout << "Error: Error: Too much arguments!\n";
+			}
+		}
+	}
+	else if (figure == "rectangle") {
+		double x, y, width, height;
+		if (commandParser::parseRectangleGeometry(ss, x, y, width, height) && commandParser::parseAreaStyle(ss, fill, stroke, strokeWidth)) {
+			if (commandParser::isClean(ss)) {
+
+				figures.create(new Rectangle(Point(x, y), width, height, fill, stroke, strokeWidth));
+			}
+			else {
+				std::cout << "Error: Error: Too much arguments!\n";
+			}
+		}
+	}
+	else if (figure == "line") {
+		double x1, y1, x2, y2;
+		if (commandParser::parseLineGeometry(ss, x1, y1, x2, y2) && commandParser::parseLinearStyle(ss, stroke, strokeWidth)) {
+			if (commandParser::isClean(ss)) {
+				figures.create(new Line(Point(x1, y1), Point(x2, y2), stroke, strokeWidth));
+			}
+			else {
+				std::cout << "Error: Error: Too much arguments!\n";
+			}
+		}
+	}
+
+}
+
+void SvgEditor::handleWithin(std::stringstream& ss) {
+	std::string region;
+	if (!(ss >> region)) {
+		std::cout << "Error: Command 'within' requires a region type (rectangle or circle).\n";
+	}
+	else if (region != "rectangle" && region != "circle") {
+		std::cout << "Error: Region type can only be circle or rectangle.\n";
+	}
+	else if (region == "circle") {
+		double cx, cy, r;
+		if (commandParser::parseCircleGeometry(ss, cx, cy, r)) {
+			if (commandParser::isClean(ss)) {
+				figures.withinCircle(cx, cy, r);
+			}
+			else {
+				std::cout << "Error: Error: Too much arguments!\n";
+			}
+		}
+	}
+	else if (region == "rectangle") {
+		double x, y, width, height;
+		if (commandParser::parseRectangleGeometry(ss, x, y, width, height)) {
+			if (commandParser::isClean(ss)) {
+				figures.withinRectangle(x, y, width, height);
+			}
+			else {
+				std::cout << "Error: Error: Too much arguments!\n";
+			}
+		}
+	}
+}
+
+void SvgEditor::handleTranslate(std::stringstream& ss) {
+	bool isAllFigures = false;
+	int n = 0;
+	double horizontal = 0;
+	double vertical = 0;
+	if (commandParser::parseTranslate(ss, horizontal, vertical, n, isAllFigures)) {
+		if (isAllFigures) {
+			figures.translate(horizontal, vertical);
+		}
+		else {
+			figures.translate(n, horizontal, vertical);
+		}
+	}
+}
+
 void SvgEditor::start() {
 	bool isRunning = true;
 	std::string line;
@@ -56,6 +184,7 @@ void SvgEditor::start() {
 			ss >> command; //Извлича първата дума (командата)
 
 			if (command == "exit") { //Програма ще приключи без значение какво селдва след командата exit
+				std::cout << "Exit\n";
 				isRunning = false;
 			}
 			else if (command == "help") {
@@ -104,112 +233,26 @@ void SvgEditor::start() {
 				}
 				else if (command == "saveas") {
 					std::string tempPath;
-					commandParser::parsePathOnly(ss, tempPath, command);
-					saveAs();
+					if (commandParser::parsePathOnly(ss, tempPath, command)) {
+						saveAs(tempPath);
+					}
 				}
 
 				else if (command == "create") {
-					std::string figure;
-					std::string fill = "none";
-					std::string stroke = "none";
-					double strokeWidth = 1.0;
-					if (!(ss >> figure)) {
-						std::cout << "Error: Command 'create' requires a figure type (line, rectangle or circle).\n";
-					}
-					else if (figure != "rectangle" && figure != "circle" && figure != "line") {
-						std::cout << "Error: Figure type can only be line, circle or rectangle.\n";
-					}
-					else if (figure == "circle") {
-						double cx, cy, r;
-						if (commandParser::parseCircleGeometry(ss, cx, cy, r) && commandParser::parseAreaStyle(ss, fill, stroke, strokeWidth)) {
-							if (commandParser::isClean(ss)) {
-								figures.create(new Circle(Point(cx, cy), r, fill, stroke, strokeWidth));
-							}
-							else {
-								std::cout << "Error: Error: Too much arguments!\n";
-							}
-						}
-						else { continue; }
-					}
-					else if (figure == "rectangle") {
-						double x, y, width, height;
-						if (commandParser::parseRectangleGeometry(ss, x, y, width, height) && commandParser::parseAreaStyle(ss, fill, stroke, strokeWidth)) {
-							if (commandParser::isClean(ss)) {
-
-								figures.create(new Rectangle(Point(x, y), width, height, fill, stroke, strokeWidth));
-							}
-							else {
-								std::cout << "Error: Error: Too much arguments!\n";
-							}
-						}
-						else { continue; }
-					}
-					else if (figure == "line") {
-						double x1, y1, x2, y2;
-						if (commandParser::parseLineGeometry(ss, x1, y1, x2, y2) && commandParser::parseLinearStyle(ss, stroke, strokeWidth)) {
-							if (commandParser::isClean(ss)) {
-								figures.create(new Line(Point(x1, y1), Point(x2, y2), stroke, strokeWidth));
-							}
-							else {
-								std::cout << "Error: Error: Too much arguments!\n";
-							}
-						}
-						else { continue; }
-					}
+					handleCreate(ss);
 					
 				}
 				else if (command == "erase") {
 					int n;
-					commandParser::parseNOnly(ss, n, command);
-					figures.erase(n);
+					if (commandParser::parseNOnly(ss, n, command)) {
+						figures.erase(n);
+					}
 				}
 				else if (command == "translate") {
-					bool isAllFigures = false;
-					int n = 0;
-					double horizontal = 0;
-					double vertical = 0;
-					if (commandParser::parseTranslate(ss, horizontal, vertical, n, isAllFigures)) {
-						if (isAllFigures) {
-							figures.translate(n, horizontal, vertical);
-						}
-						else {
-							figures.translate(horizontal, vertical);
-						}
-					}
+					handleTranslate(ss);
 				}
 				else if (command == "within") {
-					std::string region;
-					if (!(ss >> region)) {
-						std::cout << "Error: Command 'within' requires a region type (rectangle or circle).\n";
-					}
-					else if (region != "rectangle" && region != "circle") {
-						std::cout << "Error: Region type can only be circle or rectangle.\n";
-					}
-					else if (region == "circle") {
-						double cx, cy, r;
-						if (commandParser::parseCircleGeometry(ss, cx, cy, r)) {
-							if (commandParser::isClean(ss)) {
-								figures.withinCircle(cx, cy, r);
-							}
-							else {
-								std::cout << "Error: Error: Too much arguments!\n";
-							}
-						}
-						else { continue; }
-					}
-					else if (region == "rectangle") {
-						double x, y, width, height;
-						if (commandParser::parseRectangleGeometry(ss, x, y, width, height)) {
-							if (commandParser::isClean(ss)) {
-								figures.withinRectangle(x, y, width, height);
-							}
-							else {
-								std::cout << "Error: Error: Too much arguments!\n";
-							}
-						}
-						else { continue; }
-					}
-					
+					handleWithin(ss);
 				}
 				else if (command == "open") {
 					std::cout << "Error: File " << getFileName(currentFilePath) << " is already open. Please close it first.\n";
@@ -227,4 +270,5 @@ void SvgEditor::start() {
 		}
 		
 	}
+
 }

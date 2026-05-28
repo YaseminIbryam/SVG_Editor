@@ -32,6 +32,12 @@ void FigureList::clear() {
 	list.clear();
 }
 
+void FigureList::save(std::ostream& out) const {
+	for (Figure* figure : list) {
+		figure->save(out);
+	}
+}
+
 void FigureList::print() const {
 	int n = 0;
 	for(const Figure* figure : list) {

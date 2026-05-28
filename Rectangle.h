@@ -21,6 +21,8 @@ public:
 	*/
 	Rectangle* clone() const final;
 
+	void save(std::ostream& out) const final;
+
 	/// Извежда правоъгълника на екрана.
 	void print() const final;
 

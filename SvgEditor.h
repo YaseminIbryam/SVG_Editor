@@ -16,6 +16,8 @@ private:
 	 */
 	std::string getFileName(const std::string& filePath) const;
 
+	bool writeToFile(const std::string& path);
+
 	/**
 	 * @brief Отваря SVG файл въз основа на въведен от потребителя път.
 	 * @details Ако подаденият файл не съществува, създава нов празен файл.
@@ -34,11 +36,16 @@ private:
 	 * @brief Записва текущите данни в напълно нов файл.
 	 * @details Изисква от потребителя да въведе нов валиден път, където да бъде запазена информацията.
 	 */
-	void saveAs();
+	void saveAs(const std::string& newPath);
 
 	/// Извежда на екрана списък с всички възможни команди.
 	void help();
 
+	void handleCreate(std::stringstream& ss);
+
+	void handleWithin(std::stringstream& ss);
+
+	void handleTranslate(std::stringstream& ss);
 public:
 	/**
 	 * @brief Пуска основния цикъл на програмата.

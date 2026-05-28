@@ -13,6 +13,17 @@ Rectangle* Rectangle::clone() const {
 	return new Rectangle(*this);
 }
 
+void Rectangle::save(std::ostream& out) const {
+	out << "<rect x=\"" << upperLeft.x << "\" y=\"" << upperLeft.y << "\" width=\"" << width << "\" height=\"" << height << "\" fill=\"" << fill << "\" ";
+	if (stroke != "none") {
+		out << "stroke=\"" << stroke << "\" ";
+		if (strokeWidth != 1) {
+			out << "stroke-width=\"" << strokeWidth << "\" ";
+		}
+	}
+	out << "/>\n";
+}
+
 void Rectangle::print() const {
 	std::cout << "rectangle " << upperLeft.x << ' ' << upperLeft.y << ' ' << width << ' ' << height << ' ' << fill;
 	if (stroke != "none") {

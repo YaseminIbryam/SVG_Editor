@@ -20,6 +20,8 @@ public:
 	*/
 	Line* clone() const final;
 
+	void save(std::ostream& out) const final;
+
 	/// Извежда линията на екрана.
 	void print() const final;
 

@@ -11,6 +11,14 @@ Line* Line::clone() const {
 	return new Line(*this);
 }
 
+void Line::save(std::ostream& out) const {
+	out << "<line x1=\"" << start.x << "\" y1=\"" << start.y << "\" x2=\"" << end.x << "\" y2=\"" << end.y << "\" stroke=\"" << stroke << "\" ";
+	if (strokeWidth != 1) {
+		out << "stroke-width=\"" << strokeWidth << "\" ";
+	}
+	out << "/>\n";
+}
+
 void Line::print() const {
 	std::cout << "line " << start.x << ' ' << start.y << ' ' << end.x << ' ' << end.y << ' ' << stroke << ' ' << strokeWidth;
 }

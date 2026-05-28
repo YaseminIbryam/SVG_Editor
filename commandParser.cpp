@@ -26,7 +26,17 @@ bool commandParser::isValidPath(std::string& path) {
 	return true;
 }
 
-bool commandParser::parsePathOnly(std::stringstream& ss, std::string& path, const std::string& command) {
+bool commandParser::parsePathOnly(std::stringstream& ss, std::string& path, const std::string& command) {//довърши 
+	while (std::isspace(ss.peek())) {
+		ss.get();
+	}
+	if (ss.peek() == '"') {
+		ss.get();
+		std::getline(ss,path, '"');
+	}
+	else {
+
+	}
 	if (ss >> path) {
 		if (isValidPath(path)) {
 			if (isClean(ss)) {
