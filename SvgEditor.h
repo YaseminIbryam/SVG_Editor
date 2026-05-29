@@ -18,6 +18,12 @@ private:
 
 	bool writeToFile(const std::string& path);
 	
+	std::string extractFill(pugi::xml_node tag, const char* def, const char* reserve) const;
+
+	std::string extractStroke(pugi::xml_node tag, const char* def, const char* reserve) const;
+
+	double extractStrokeWidth(pugi::xml_node tag, const double def, const double reserve) const;
+
 	void extractFigures(pugi::xml_node tag, const char* defaultFill, const char* defaultStroke, double defaultStrokeWidth);
 
 	bool getFiguresFromFile(const std::string& file);

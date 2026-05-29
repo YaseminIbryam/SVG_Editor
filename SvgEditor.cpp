@@ -34,6 +34,46 @@ bool SvgEditor::writeToFile(const std::string& path) {
 	return true;
 }
 
+std::string SvgEditor::extractFill(pugi::xml_node tag, const char* def, const char* reserve) const {
+	std::string fill;
+	const pugi::xml_attribute fillAttribute = tag.attribute("fill");
+	const char* value;
+	if (*def != '\0') {
+		value = def;
+	}
+	else {
+		value = reserve;
+	}
+	fill = fillAttribute.as_string(value);
+	return fill;
+}
+std::string SvgEditor::extractStroke(pugi::xml_node tag, const char* def, const char* reserve) const {
+	std::string stroke;
+	const pugi::xml_attribute strokeAttribute = tag.attribute("stroke");
+	const char* value;
+	if (*def != '\0') {
+		value = def;
+	}
+	else {
+		value = reserve;
+	}
+	stroke = strokeAttribute.as_string(value);
+	return stroke;
+}
+double SvgEditor::extractStrokeWidth(pugi::xml_node tag, const double def, const double reserve) const {
+	double strokeWidth;
+	const pugi::xml_attribute strokeWidthAttribute = tag.attribute("stroke-width");
+	double value;
+	if (def >= 0.0) {
+		value = def;
+	}
+	else {
+		value =  reserve;
+	}
+	strokeWidth = strokeWidthAttribute.as_double(value);
+	return strokeWidth;
+}
+
 void SvgEditor::extractFigures(pugi::xml_node tag, const char* defaultFill, const char* defaultStroke, double defaultStrokeWidth) {
 	for (pugi::xml_node childTag : tag.children()) {
 		if (std::string(childTag.name()) == "g") {
@@ -54,68 +94,71 @@ void SvgEditor::extractFigures(pugi::xml_node tag, const char* defaultFill, cons
 			}
 			extractFigures(childTag, tempDefaultFill, tempDefaultStroke, tempDefaultStrokeWidth);	
 		}
-		//TO DO: In all checks below for each figure check if the attributes are actually given if not check if the default one is given if not give it yourself according to the figure
 		else if (std::string(childTag.name()) == "circle") {
-			Point center(childTag.attribute("cx").as_double(), childTag.attribute("cy").as_double());
-			double r = childTag.attribute("r").as_double();
-			std::string fill = childTag.attribute("fill").as_string(defaultFill);
-			std::string stroke = childTag.attribute("stroke").as_string(defaultStroke);
-			double strokeWidth = childTag.attribute("stroke-width").as_double(defaultStrokeWidth);
+			const Point center(childTag.attribute("cx").as_double(0.0), childTag.attribute("cy").as_double(0.0));
+			const double r = childTag.attribute("r").as_double(0.0);
+			const std::string fill = extractFill(childTag, defaultFill, "black");
+			const std::string stroke = extractStroke(childTag, defaultStroke, "none");
+			const double strokeWidth = extractStrokeWidth(childTag, defaultStrokeWidth, 1.0);
 			figures.create(new Circle(center, r, fill, stroke, strokeWidth));
 		}
 		else if (std::string(childTag.name()) == "rect") {
-			Point upperLeft(childTag.attribute("x").as_double(), childTag.attribute("y").as_double());
-			double width = childTag.attribute("width").as_double();
-			double height = childTag.attribute("height").as_double();
-			std::string fill = childTag.attribute("fill").as_string(defaultFill);
-			std::string stroke = childTag.attribute("stroke").as_string(defaultStroke);
-			double strokeWidth = childTag.attribute("stroke-width").as_double(defaultStrokeWidth);
+			Point upperLeft(childTag.attribute("x").as_double(0.0), childTag.attribute("y").as_double(0.0));
+			const double width = childTag.attribute("width").as_double(0.0);
+			const double height = childTag.attribute("height").as_double(0.0);
+			const std::string fill = extractFill(childTag, defaultFill, "black");
+			const std::string stroke = extractStroke(childTag, defaultStroke, "none");
+			const double strokeWidth = extractStrokeWidth(childTag, defaultStrokeWidth, 1.0);
 			figures.create(new Rectangle(upperLeft, width, height, fill, stroke, strokeWidth));
 		}
 		else if (std::string(childTag.name()) == "line") {
-			Point start(childTag.attribute("x1").as_double(), childTag.attribute("y1").as_double());
-			Point end(childTag.attribute("x2").as_double(), childTag.attribute("y2").as_double());
-			std::string stroke = childTag.attribute("stroke").as_string(defaultStroke);
-			double strokeWidth = childTag.attribute("stroke-width").as_double(defaultStrokeWidth);
+			const Point start(childTag.attribute("x1").as_double(0.0), childTag.attribute("y1").as_double(0.0));
+			const Point end(childTag.attribute("x2").as_double(0.0), childTag.attribute("y2").as_double(0.0));
+			const std::string stroke = extractStroke(childTag, defaultStroke, "black");
+			const double strokeWidth = extractStrokeWidth(childTag, defaultStrokeWidth, 1.0);
 			figures.create(new Line(start, end, stroke, strokeWidth));
 		}
 	}
 	return;
 }
 
+
+//Част от функцията е базирана на примерите от https://pugixml.org/docs/quickstart.html
 bool SvgEditor::getFiguresFromFile(const std::string& file) {
 	pugi::xml_document doc;
-	pugi::xml_parse_result result = doc.load_file(file.c_str()); //c_str: std::string -> const char*
+	const pugi::xml_parse_result result = doc.load_file(file.c_str()); //c_str: std::string -> const char*
 	if (!result)
 	{
 		std::cout << "Error: " << result.description() << "\n";
 		return false;
 	}
-	pugi::xml_node node = doc.child("svg");
+	const pugi::xml_node node = doc.child("svg");
 	if (!node) {
 		std::cout << "Error: Missing <svg> in " << getFileName(file) << std::endl;
 		return false;
 	}
-	
+	extractFigures(node, "", "", -1.0);
 	return true;
 }
 
 void SvgEditor::open(std::string& filePath) {
 	std::ifstream file(filePath); // опитва да отвари файла за четене
-	if (!file.is_open()) {
-		std::ofstream createFile(filePath); // отваря за писане (създава го)
-		createFile.close();
-		file.clear();
-		file.open(filePath); // пак опитва да отвари файла за четене 
+	if (file.is_open()) {
+		file.close();
+	}
+	else {
+		std::ofstream file(filePath); // отваря за писане (създава го)
 		if (!file.is_open()) { // При случай, че пътят е невалиден
 			std::cout << "Error: Invalid path.";
 			return;
 		}
+		file << "<svg>\n</svg>";
+		file.close();
 	}
-	//TO DO: GET THE INFO FROM THE FILE AND STORE IT
-	currentFilePath = filePath;
-	file.close();
-	std::cout << "Successfully opened " << getFileName(currentFilePath) << std::endl;
+	if (getFiguresFromFile(filePath)) {
+		currentFilePath = filePath;
+		std::cout << "Successfully opened " << getFileName(currentFilePath) << std::endl;
+	}
 }
 
 void SvgEditor::save() {
@@ -133,8 +176,9 @@ void SvgEditor::saveAs(const std::string& newPath) {
 
 void SvgEditor::close() {
 	figures.clear();
-	currentFilePath.clear();
 	std::cout << "Successfully closed " << getFileName(currentFilePath) << std::endl;
+	currentFilePath.clear();
+	
 	
 }
 void SvgEditor::help() {
