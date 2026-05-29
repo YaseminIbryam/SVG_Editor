@@ -9,22 +9,6 @@ bool commandParser::isClean(std::stringstream& ss) {
 	return ss.eof();
 }
 
-bool commandParser::isValidPath(std::string& path) {
-	//Премахва кавичките от началото и края, ако има такива
-	if (path.size() >= 2 && path.front() == '"' && path.back() == '"') {
-		path.pop_back();
-		path.erase(0, 1);
-	}
-	else if (path.front() == '"' || path.back() == '"') { // при " или несъответствие в кавичките
-		std::cout << "Error! Wrong file name format!" << std::endl;
-		return false;
-	}
-	if (!path.ends_with(".svg")) { //C++20
-		std::cout << "Error! The program supports the .svg file format!" << std::endl;
-		return false;
-	}
-	return true;
-}
 
 bool commandParser::parsePathOnly(std::stringstream& ss, std::string& path, const std::string& command) {//довърши 
 	while (std::isspace(ss.peek())) {
@@ -32,24 +16,40 @@ bool commandParser::parsePathOnly(std::stringstream& ss, std::string& path, cons
 	}
 	if (ss.peek() == '"') {
 		ss.get();
-		std::getline(ss,path, '"');
-	}
-	else {
-
-	}
-	if (ss >> path) {
-		if (isValidPath(path)) {
-			if (isClean(ss)) {
-				return true;
+		bool quotes = false;
+		char symbol;
+		while (ss.get(symbol) && !quotes) {
+			if (symbol == '"') {
+				quotes = true;
 			}
-			std::cout << "Error: Too many arguments for '" << command << "'\n";
+			else {
+				path.push_back(symbol);
+			}
+		}
+		if (!quotes) {
+			std::cout << "Error: Missing closing quotes.\n";
+			return false;
 		}
 	}
 	else {
-		std::cout << "Error: Missing file path for command '" << command << "'\n";
+		if (!(ss >> path)) {
+			std::cout << "Error: Missing file path for command '" << command << "'\n";
+			return false;
+		}
 	}
-	return false;
+	if (!isClean(ss)) {
+		std::cout << "Error: Too many arguments for '" << command << "'\n";
+		return false;
+	}
+	if (!path.ends_with(".svg")) { //C++20
+		std::cout << "Error! The program supports the .svg file format!" << std::endl;
+		return false;
+	}
+	return true;
+	
 }
+	
+	
 
 
 void commandParser::strToDouble(const std::string& str, double& num) {
