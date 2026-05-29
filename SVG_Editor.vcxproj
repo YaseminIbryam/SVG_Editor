@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="commandParser.cpp" />
+    <ClCompile Include="external\pugixml\src\pugixml.cpp" />
     <ClCompile Include="FigureList.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="main.cpp" />
@@ -30,6 +31,8 @@
   <ItemGroup>
     <ClInclude Include="Circle.h" />
     <ClInclude Include="commandParser.h" />
+    <ClInclude Include="external\pugixml\src\pugiconfig.hpp" />
+    <ClInclude Include="external\pugixml\src\pugixml.hpp" />
     <ClInclude Include="Figure.h" />
     <ClInclude Include="FigureList.h" />
     <ClInclude Include="Line.h" />

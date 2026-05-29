@@ -5,6 +5,7 @@
 #include "Circle.h"
 #include "Rectangle.h"
 #include "Line.h"
+#include "external/pugixml/src/pugixml.hpp"
 
 
 std::string SvgEditor::getFileName(const std::string& path) const{
@@ -30,6 +31,72 @@ bool SvgEditor::writeToFile(const std::string& path) {
 	figures.save(file);
 	file << "</svg>\n";
 	file.close();
+	return true;
+}
+
+void SvgEditor::extractFigures(pugi::xml_node tag, const char* defaultFill, const char* defaultStroke, double defaultStrokeWidth) {
+	for (pugi::xml_node childTag : tag.children()) {
+		if (std::string(childTag.name()) == "g") {
+			const char* tempDefaultFill = defaultFill;
+			const char* tempDefaultStroke = defaultStroke;
+			double tempDefaultStrokeWidth = defaultStrokeWidth;
+			pugi::xml_attribute fillAttribute = childTag.attribute("fill");
+			if (fillAttribute) {
+				tempDefaultFill = fillAttribute.as_string();
+			}
+			pugi::xml_attribute strokeAttribute = childTag.attribute("stroke");
+			if (strokeAttribute) {
+				tempDefaultStroke = strokeAttribute.as_string();
+			}
+			pugi::xml_attribute strokeWidthAttribute = childTag.attribute("stroke-width");
+			if (strokeWidthAttribute) {
+				tempDefaultStrokeWidth = strokeWidthAttribute.as_double();
+			}
+			extractFigures(childTag, tempDefaultFill, tempDefaultStroke, tempDefaultStrokeWidth);	
+		}
+		//TO DO: In all checks below for each figure check if the attributes are actually given if not check if the default one is given if not give it yourself according to the figure
+		else if (std::string(childTag.name()) == "circle") {
+			Point center(childTag.attribute("cx").as_double(), childTag.attribute("cy").as_double());
+			double r = childTag.attribute("r").as_double();
+			std::string fill = childTag.attribute("fill").as_string(defaultFill);
+			std::string stroke = childTag.attribute("stroke").as_string(defaultStroke);
+			double strokeWidth = childTag.attribute("stroke-width").as_double(defaultStrokeWidth);
+			figures.create(new Circle(center, r, fill, stroke, strokeWidth));
+		}
+		else if (std::string(childTag.name()) == "rect") {
+			Point upperLeft(childTag.attribute("x").as_double(), childTag.attribute("y").as_double());
+			double width = childTag.attribute("width").as_double();
+			double height = childTag.attribute("height").as_double();
+			std::string fill = childTag.attribute("fill").as_string(defaultFill);
+			std::string stroke = childTag.attribute("stroke").as_string(defaultStroke);
+			double strokeWidth = childTag.attribute("stroke-width").as_double(defaultStrokeWidth);
+			figures.create(new Rectangle(upperLeft, width, height, fill, stroke, strokeWidth));
+		}
+		else if (std::string(childTag.name()) == "line") {
+			Point start(childTag.attribute("x1").as_double(), childTag.attribute("y1").as_double());
+			Point end(childTag.attribute("x2").as_double(), childTag.attribute("y2").as_double());
+			std::string stroke = childTag.attribute("stroke").as_string(defaultStroke);
+			double strokeWidth = childTag.attribute("stroke-width").as_double(defaultStrokeWidth);
+			figures.create(new Line(start, end, stroke, strokeWidth));
+		}
+	}
+	return;
+}
+
+bool SvgEditor::getFiguresFromFile(const std::string& file) {
+	pugi::xml_document doc;
+	pugi::xml_parse_result result = doc.load_file(file.c_str()); //c_str: std::string -> const char*
+	if (!result)
+	{
+		std::cout << "Error: " << result.description() << "\n";
+		return false;
+	}
+	pugi::xml_node node = doc.child("svg");
+	if (!node) {
+		std::cout << "Error: Missing <svg> in " << getFileName(file) << std::endl;
+		return false;
+	}
+	
 	return true;
 }
 

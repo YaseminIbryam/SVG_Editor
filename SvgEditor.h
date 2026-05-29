@@ -17,6 +17,10 @@ private:
 	std::string getFileName(const std::string& filePath) const;
 
 	bool writeToFile(const std::string& path);
+	
+	void extractFigures(pugi::xml_node tag, const char* defaultFill, const char* defaultStroke, double defaultStrokeWidth);
+
+	bool getFiguresFromFile(const std::string& file);
 
 	/**
 	 * @brief Отваря SVG файл въз основа на въведен от потребителя път.
