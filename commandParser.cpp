@@ -10,7 +10,7 @@ bool commandParser::isClean(std::stringstream& ss) {
 }
 
 
-bool commandParser::parsePathOnly(std::stringstream& ss, std::string& path, const std::string& command) {//довърши 
+bool commandParser::parsePathOnly(std::stringstream& ss, std::string& path, const std::string& command) {
 	while (std::isspace(ss.peek())) {
 		ss.get();
 	}
@@ -133,7 +133,7 @@ bool commandParser::parseTranslate(std::stringstream& ss, double& horizontal, do
 bool commandParser::parseRectangleGeometry(std::stringstream& ss, double& x, double& y, double& width, double& height) {
 	std::string arg1, arg2, arg3, arg4;
 	if (!(ss >> arg1 && ss >> arg2 && ss >> arg3 && ss >> arg4)) {
-		std::cout << "Error: A rectangle requires at least 4 double values (x, y, width, height)";
+		std::cout << "Error: A rectangle requires at least 4 double values (x, y, width, height).\n";
 		return false;
 	}
 	strToDouble(arg1, x);
@@ -166,7 +166,7 @@ bool commandParser::parseCircleGeometry(std::stringstream& ss, double& cx, doubl
 bool commandParser::parseLineGeometry(std::stringstream& ss, double& x1, double& y1, double& x2, double& y2) {
 	std::string arg1, arg2, arg3, arg4;
 	if (!(ss >> arg1 && ss >> arg2 && ss >> arg3 && ss >> arg4)) {
-		std::cout << "Error: A line requires at least 4 double values (x1, y1, x2, y2)";
+		std::cout << "Error: A line requires at least 4 double values (x1, y1, x2, y2).\n";
 		return false;
 	}
 	strToDouble(arg1, x1);

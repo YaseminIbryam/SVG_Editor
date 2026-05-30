@@ -38,6 +38,13 @@ void FigureList::save(std::ostream& out) const {
 	}
 }
 
+std::string FigureList::getFigureType(int n) const {
+	if (n <= 0 || n > list.size()) {
+		return "";
+	}
+	return list[n - 1]->getType();
+}
+
 void FigureList::print() const {
 	int n = 0;
 	for(const Figure* figure : list) {
@@ -48,37 +55,34 @@ void FigureList::print() const {
 	
 }
 
-void FigureList::create(Figure* NewFigure) {
-	list.push_back(NewFigure);
+std::size_t FigureList::create(Figure* newFigure) {
+	list.push_back(newFigure);
+	return list.size();
 }
 
 bool FigureList::erase(int n) {
 	if (n <= 0 || n > list.size()) {
-		//std::cout << "There is no figure number " << n << "!/n";
 		return false;
 	}
 	std::size_t i = n - 1;
 	delete list[i];
 	list.erase(list.begin() + i);
-	//std::cout << "Erased a circle (" << n << ")/n";
 	return true;
 
 }
 
 bool FigureList::translate(int n, double horizontal, double vertical) {
 	if (n <= 0 || n > list.size()) {
-		//std::cout << "There is no figure number " << n << "!/n";
 		return false;
 	}
 	list[n - 1]->translate(horizontal, vertical);
-	//Translated figure X
+	return true;
 }
 
 void FigureList::translate(double horizontal, double vertical) {
 	for (Figure* figure : list) {
 		figure->translate(horizontal, vertical);
 	}
-	//Translated all figures
 }
 
 void FigureList::withinRectangle(double x, double y, double width, double height) {

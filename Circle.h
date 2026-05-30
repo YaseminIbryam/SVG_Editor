@@ -13,11 +13,11 @@ private:
 public:
 	/** 
 	* @brief Конструктор за създаване на кръг.
-	* @param center Център
-	* @param radius Радиус
-	* @param fill Цвят на пълнежа
-	* @param stroke Цвят на контрура
-	* @param strokeWidth Дебелина на контура
+	* @param center Центърът на кръга.
+	* @param radius Радиусът на кръга.
+	* @param fill Цвят на запълването на кръга. Черен по подразбиране.
+	* @param stroke Цвят на контура на кръга. По подразбиране е "none".
+	* @param strokeWidth Дебелина на контура на кръга. По подразбиране е 1.0.
 	*/
 	Circle(Point center, double radius, std::string fill = "black", std::string stroke = "none", double strokeWidth = 1.0);
 	
@@ -27,7 +27,17 @@ public:
 	*/
 	Circle* clone() const final;
 
+	/**
+	* @brief Записва кръга в изходен поток във формат SVG.
+	* @param out Изходният поток, в който ще се записват данните.
+	*/
 	void save(std::ostream& out) const final;
+
+	/**
+	 * @brief Връща типа на фигурата.
+	 * @return std::string Низа на типа "circle".
+	 */
+	std::string getType() const final;
 
 	/// Извежда кръга на екрана.
 	void print() const final;

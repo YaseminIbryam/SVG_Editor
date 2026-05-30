@@ -5,7 +5,7 @@
 #include "Circle.h"
 #include "Rectangle.h"
 #include "Line.h"
-#include "external/pugixml/src/pugixml.hpp"
+
 
 
 std::string SvgEditor::getFileName(const std::string& path) const{
@@ -193,50 +193,58 @@ void SvgEditor::help() {
 
 void SvgEditor::handleCreate(std::stringstream& ss) {
 	std::string figure;
+	if (!(ss >> figure)) {
+		std::cout << "Error: Command 'create' requires a figure type (line, rectangle or circle).\n";
+		return;
+	}
+	if (figure != "rectangle" && figure != "circle" && figure != "line") {
+		std::cout << "Error: Figure type can only be line, circle or rectangle.\n";
+		return;
+	}
 	std::string fill = "none";
 	std::string stroke = "none";
 	double strokeWidth = 1.0;
-	if (!(ss >> figure)) {
-		std::cout << "Error: Command 'create' requires a figure type (line, rectangle or circle).\n";
-	}
-	else if (figure != "rectangle" && figure != "circle" && figure != "line") {
-		std::cout << "Error: Figure type can only be line, circle or rectangle.\n";
-	}
-	else if (figure == "circle") {
+	std::size_t n;
+	if (figure == "circle") {
 		double cx, cy, r;
 		if (commandParser::parseCircleGeometry(ss, cx, cy, r) && commandParser::parseAreaStyle(ss, fill, stroke, strokeWidth)) {
 			if (commandParser::isClean(ss)) {
-				figures.create(new Circle(Point(cx, cy), r, fill, stroke, strokeWidth));
+				n = figures.create(new Circle(Point(cx, cy), r, fill, stroke, strokeWidth));
 			}
 			else {
-				std::cout << "Error: Error: Too much arguments!\n";
+				std::cout << "Error: Too many arguments!\n";
+				return;
 			}
 		}
+		else { return; }
 	}
 	else if (figure == "rectangle") {
 		double x, y, width, height;
 		if (commandParser::parseRectangleGeometry(ss, x, y, width, height) && commandParser::parseAreaStyle(ss, fill, stroke, strokeWidth)) {
 			if (commandParser::isClean(ss)) {
-
-				figures.create(new Rectangle(Point(x, y), width, height, fill, stroke, strokeWidth));
+				n = figures.create(new Rectangle(Point(x, y), width, height, fill, stroke, strokeWidth));
 			}
 			else {
-				std::cout << "Error: Error: Too much arguments!\n";
+				std::cout << "Error: Too many arguments!\n";
+				return;
 			}
 		}
+		else { return; }
 	}
 	else if (figure == "line") {
 		double x1, y1, x2, y2;
 		if (commandParser::parseLineGeometry(ss, x1, y1, x2, y2) && commandParser::parseLinearStyle(ss, stroke, strokeWidth)) {
 			if (commandParser::isClean(ss)) {
-				figures.create(new Line(Point(x1, y1), Point(x2, y2), stroke, strokeWidth));
+				n = figures.create(new Line(Point(x1, y1), Point(x2, y2), stroke, strokeWidth));
 			}
 			else {
-				std::cout << "Error: Error: Too much arguments!\n";
+				std::cout << "Error: Too many arguments!\n";
+				return;
 			}
 		}
+		else { return; }
 	}
-
+	std::cout << "Successfully created " << figure << " (" << n << ")\n";
 }
 
 void SvgEditor::handleWithin(std::stringstream& ss) {
@@ -254,7 +262,7 @@ void SvgEditor::handleWithin(std::stringstream& ss) {
 				figures.withinCircle(cx, cy, r);
 			}
 			else {
-				std::cout << "Error: Error: Too much arguments!\n";
+				std::cout << "Error: Too many arguments!\n";
 			}
 		}
 	}
@@ -265,23 +273,32 @@ void SvgEditor::handleWithin(std::stringstream& ss) {
 				figures.withinRectangle(x, y, width, height);
 			}
 			else {
-				std::cout << "Error: Error: Too much arguments!\n";
+				std::cout << "Error: Too many arguments!\n";
 			}
 		}
 	}
 }
 
 void SvgEditor::handleTranslate(std::stringstream& ss) {
-	bool isAllFigures = false;
+	bool hasN = false;
 	int n = 0;
 	double horizontal = 0;
 	double vertical = 0;
-	if (commandParser::parseTranslate(ss, horizontal, vertical, n, isAllFigures)) {
-		if (isAllFigures) {
-			figures.translate(horizontal, vertical);
+	if (commandParser::parseTranslate(ss, horizontal, vertical, n, hasN)) {
+		if (hasN) {
+			if (figures.translate(n, horizontal, vertical)) {
+
+				std::cout << "Translated a " << figures.getFigureType(n) << " (" << n << ")\n";
+			}
+			else {
+				std::cout << "There is no figure number " << n << "!\n";
+
+			}
 		}
 		else {
-			figures.translate(n, horizontal, vertical);
+			
+			figures.translate(horizontal, vertical);
+			std::cout << "Translated all figures\n";
 		}
 	}
 }
@@ -303,7 +320,7 @@ void SvgEditor::start() {
 					help();
 				}
 				else {
-					std::cout << "Error: Command 'help' does not accept arguments!";
+					std::cout << "Error: Command 'help' does not accept arguments!" << std::endl;
 				}
 			}
 			else if (currentFilePath.empty()) {
@@ -323,7 +340,7 @@ void SvgEditor::start() {
 						close();
 					}
 					else {
-						std::cout << "Error: Command 'close' does not accept arguments!";
+						std::cout << "Error: Command 'close' does not accept arguments!" << std::endl;
 					}
 				}
 				else if (command == "save") {
@@ -331,7 +348,7 @@ void SvgEditor::start() {
 						save();
 					}
 					else {
-						std::cout << "Error: Command 'save' does not accept arguments!";
+						std::cout << "Error: Command 'save' does not accept arguments!" << std::endl;
 					}
 				}
 				else if (command == "print") {
@@ -339,7 +356,7 @@ void SvgEditor::start() {
 						figures.print();
 					}
 					else {
-						std::cout << "Error: Command 'print' does not accept arguments!";
+						std::cout << "Error: Command 'print' does not accept arguments!" << std::endl;
 					}
 				}
 				else if (command == "saveas") {
@@ -356,7 +373,13 @@ void SvgEditor::start() {
 				else if (command == "erase") {
 					int n;
 					if (commandParser::parseNOnly(ss, n, command)) {
-						figures.erase(n);
+						std::string type = figures.getFigureType(n);
+						if (figures.erase(n)) {
+							std::cout << "Erased a " << type << " (" << n << ")\n";
+						}
+						else {
+							std::cout << "There is no figure number " << n << "!\n";
+						}
 					}
 				}
 				else if (command == "translate") {
@@ -379,7 +402,5 @@ void SvgEditor::start() {
 		catch (const std::out_of_range&) {
 			std::cout << "Error: The number is too large or too small for this data type.\n"; //само за сигурност
 		}
-		
 	}
-
 }

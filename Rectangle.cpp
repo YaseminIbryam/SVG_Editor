@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Rectangle.h"
+#include <cmath>
 
 
 Rectangle::Rectangle(Point upperLeft, double width, double height, std::string fill, std::string stroke, double strokeWidth)
@@ -17,7 +18,7 @@ void Rectangle::save(std::ostream& out) const {
 	out << "<rect x=\"" << upperLeft.x << "\" y=\"" << upperLeft.y << "\" width=\"" << width << "\" height=\"" << height << "\" fill=\"" << fill << "\" ";
 	if (stroke != "none") {
 		out << "stroke=\"" << stroke << "\" ";
-		if (strokeWidth != 1) {
+		if (std::abs(strokeWidth - 1.0) > 0.000001) {
 			out << "stroke-width=\"" << strokeWidth << "\" ";
 		}
 	}
@@ -29,6 +30,10 @@ void Rectangle::print() const {
 	if (stroke != "none") {
 		std::cout << ' ' << stroke << ' ' << strokeWidth;
 	}
+}
+
+std::string Rectangle::getType() const {
+	return "rectangle";
 }
 
 void Rectangle::translate(double horizontal, double vertical) {

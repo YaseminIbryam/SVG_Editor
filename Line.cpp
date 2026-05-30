@@ -1,11 +1,12 @@
 #include <iostream>
 #include "Line.h"
+#include <cmath>
 
 Line::Line(Point start, Point end, std::string stroke, double strokeWidth)
 	: start(start),
 	end(end),
 	Figure("none", stroke, strokeWidth) {
-};
+}
 
 Line* Line::clone() const {
 	return new Line(*this);
@@ -13,10 +14,14 @@ Line* Line::clone() const {
 
 void Line::save(std::ostream& out) const {
 	out << "<line x1=\"" << start.x << "\" y1=\"" << start.y << "\" x2=\"" << end.x << "\" y2=\"" << end.y << "\" stroke=\"" << stroke << "\" ";
-	if (strokeWidth != 1) {
+	if (std::abs(strokeWidth - 1.0) > 0.000001) {
 		out << "stroke-width=\"" << strokeWidth << "\" ";
 	}
 	out << "/>\n";
+}
+
+std::string Line::getType() const {
+	return "line";
 }
 
 void Line::print() const {
@@ -34,4 +39,4 @@ bool Line::withinRectangle(double x, double y, double width, double height) cons
 
 bool Line::withinCircle(double cx, double cy, double r) const {
 	return ((start.withinCircle(cx, cy, r) && end.withinCircle(cx, cy, r)));
-};
+}
