@@ -42,6 +42,9 @@
     <ClCompile Include="external\pugixml\src\pugixml.cpp">
       <Filter>pugixml</Filter>
     </ClCompile>
+    <ClCompile Include="tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SvgEditor.h">
@@ -73,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="external\pugixml\src\pugixml.hpp">
       <Filter>pugixml</Filter>
+    </ClInclude>
+    <ClInclude Include="external\doctest.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
