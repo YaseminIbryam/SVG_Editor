@@ -204,7 +204,7 @@ void SvgEditor::handleCreate(std::stringstream& ss) {
 	std::string fill = "none";
 	std::string stroke = "none";
 	double strokeWidth = 1.0;
-	std::size_t n;
+	std::size_t n  = 0;
 	if (figure == "circle") {
 		double cx, cy, r;
 		if (commandParser::parseCircleGeometry(ss, cx, cy, r) && commandParser::parseAreaStyle(ss, fill, stroke, strokeWidth)) {
@@ -306,7 +306,7 @@ void SvgEditor::handleTranslate(std::stringstream& ss) {
 void SvgEditor::start() {
 	bool isRunning = true;
 	std::string line;
-	while (std::getline(std::cin, line) && isRunning) {
+	while (isRunning && std::getline(std::cin, line)) {
 		try {
 			std::stringstream ss(line); //Създава поток с реда
 			ss >> command; //Извлича първата дума (командата)
@@ -371,7 +371,7 @@ void SvgEditor::start() {
 					
 				}
 				else if (command == "erase") {
-					int n;
+					int n = 0;
 					if (commandParser::parseNOnly(ss, n, command)) {
 						std::string type = figures.getFigureType(n);
 						if (figures.erase(n)) {

@@ -120,6 +120,11 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('tests_8cpp.htm
 <div class="contents">
 <div class="textblock"><code>#include &quot;external/doctest.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="_point_8h_source.html">Point.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="command_parser_8h_source.html">commandParser.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_line_8h_source.html">Line.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_circle_8h_source.html">Circle.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_rectangle_8h_source.html">Rectangle.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_figure_list_8h_source.html">FigureList.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
@@ -127,7 +132,9 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a99762a821fa9a762185e634249cb3c8a" id="r_a99762a821fa9a762185e634249cb3c8a"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a99762a821fa9a762185e634249cb3c8a">TEST_CASE</a> (&quot;Point tests&quot;)</td></tr>
+<tr class="memitem:a81d2a44c1b14ca22c41a4e8b7bd0beab" id="r_a81d2a44c1b14ca22c41a4e8b7bd0beab"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a81d2a44c1b14ca22c41a4e8b7bd0beab">TEST_SUITE</a> (&quot;Parser tests&quot;)</td></tr>
+<tr class="memitem:aa64372cb5198d7a2cd7d53026d1426ce" id="r_aa64372cb5198d7a2cd7d53026d1426ce"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#aa64372cb5198d7a2cd7d53026d1426ce">TEST_SUITE</a> (&quot;Geometry tests&quot;)</td></tr>
+<tr class="memitem:ab8ee33085f49f3a3637497945a7ef13f" id="r_ab8ee33085f49f3a3637497945a7ef13f"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#ab8ee33085f49f3a3637497945a7ef13f">TEST_SUITE</a> (&quot;FigureList&quot;)</td></tr>
 </table>
 <a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
 <a id="a623b8690a262536536a43eab2d7df03d" name="a623b8690a262536536a43eab2d7df03d"></a>
@@ -145,16 +152,50 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
-<a id="a99762a821fa9a762185e634249cb3c8a" name="a99762a821fa9a762185e634249cb3c8a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a99762a821fa9a762185e634249cb3c8a">&#9670;&#160;</a></span>TEST_CASE()</h2>
+<a id="ab8ee33085f49f3a3637497945a7ef13f" name="ab8ee33085f49f3a3637497945a7ef13f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8ee33085f49f3a3637497945a7ef13f">&#9670;&#160;</a></span>TEST_SUITE() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">TEST_CASE </td>
+          <td class="memname">TEST_SUITE </td>
           <td>(</td>
-          <td class="paramtype">&quot;Point tests&quot;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">&quot;FigureList&quot;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa64372cb5198d7a2cd7d53026d1426ce" name="aa64372cb5198d7a2cd7d53026d1426ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa64372cb5198d7a2cd7d53026d1426ce">&#9670;&#160;</a></span>TEST_SUITE() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST_SUITE </td>
+          <td>(</td>
+          <td class="paramtype">&quot;Geometry tests&quot;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a81d2a44c1b14ca22c41a4e8b7bd0beab" name="a81d2a44c1b14ca22c41a4e8b7bd0beab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81d2a44c1b14ca22c41a4e8b7bd0beab">&#9670;&#160;</a></span>TEST_SUITE() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TEST_SUITE </td>
+          <td>(</td>
+          <td class="paramtype">&quot;Parser tests&quot;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>

@@ -109,5 +109,7 @@ var NAVTREEINDEX0 =
 "struct_point.html#afa38be143ae800e6ad69ce8ed4df62d8":[5,0,5,6],
 "tests_8cpp.html":[6,0,15],
 "tests_8cpp.html#a623b8690a262536536a43eab2d7df03d":[6,0,15,0],
-"tests_8cpp.html#a99762a821fa9a762185e634249cb3c8a":[6,0,15,1]
+"tests_8cpp.html#a81d2a44c1b14ca22c41a4e8b7bd0beab":[6,0,15,3],
+"tests_8cpp.html#aa64372cb5198d7a2cd7d53026d1426ce":[6,0,15,2],
+"tests_8cpp.html#ab8ee33085f49f3a3637497945a7ef13f":[6,0,15,1]
 };
