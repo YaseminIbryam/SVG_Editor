@@ -27,7 +27,7 @@ bool SvgEditor::writeToFile(const std::string& path) {
 		std::cout << "Error: Could not open file " << path << " for writing." << std::endl;
 		return false;
 	}
-	file << "<?xml version=\"1.0\" standalone=\"no\"?>\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n<svg>\n";
+	file << "<?xml version=\"1.0\" standalone=\"no\"?>\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n<svg>\n"; //<svg xmlns="http://www.w3.org/2000/svg">
 	figures.save(file);
 	file << "</svg>\n";
 	file.close();
@@ -152,7 +152,7 @@ void SvgEditor::open(std::string& filePath) {
 			std::cout << "Error: Invalid path.";
 			return;
 		}
-		file << "<svg>\n</svg>";
+		file << "<svg>\n</svg>"; //<svg xmlns="http://www.w3.org/2000/svg">\n</svg>
 		file.close();
 	}
 	if (getFiguresFromFile(filePath)) {
@@ -201,11 +201,11 @@ void SvgEditor::handleCreate(std::stringstream& ss) {
 		std::cout << "Error: Figure type can only be line, circle or rectangle.\n";
 		return;
 	}
-	std::string fill = "none";
-	std::string stroke = "none";
-	double strokeWidth = 1.0;
 	std::size_t n  = 0;
 	if (figure == "circle") {
+		std::string fill = "black";
+		std::string stroke = "none";
+		double strokeWidth = 1.0;
 		double cx, cy, r;
 		if (commandParser::parseCircleGeometry(ss, cx, cy, r) && commandParser::parseAreaStyle(ss, fill, stroke, strokeWidth)) {
 			if (commandParser::isClean(ss)) {
@@ -219,6 +219,9 @@ void SvgEditor::handleCreate(std::stringstream& ss) {
 		else { return; }
 	}
 	else if (figure == "rectangle") {
+		std::string fill = "black";
+		std::string stroke = "none";
+		double strokeWidth = 1.0;
 		double x, y, width, height;
 		if (commandParser::parseRectangleGeometry(ss, x, y, width, height) && commandParser::parseAreaStyle(ss, fill, stroke, strokeWidth)) {
 			if (commandParser::isClean(ss)) {
@@ -232,6 +235,8 @@ void SvgEditor::handleCreate(std::stringstream& ss) {
 		else { return; }
 	}
 	else if (figure == "line") {
+		std::string stroke = "black";
+		double strokeWidth = 1.0;
 		double x1, y1, x2, y2;
 		if (commandParser::parseLineGeometry(ss, x1, y1, x2, y2) && commandParser::parseLinearStyle(ss, stroke, strokeWidth)) {
 			if (commandParser::isClean(ss)) {
